@@ -3,6 +3,10 @@ import L from "leaflet"
 import { validarFormulario, Toast, confirmacion } from "../funciones";
 const formulario = document.getElementById('formularioCoordenadas');
 const btnBuscar = document.getElementById('btnBuscar');
+const btnReiniciar = document.getElementById('btnReiniciar');
+
+btnReiniciar.disabled = true;
+btnReiniciar.parentElement.style.display = 'none';
 const map = L.map('map', {
     center: [15.525158, -90.32959],
     zoom: 7,
@@ -45,8 +49,8 @@ var tooltip = L.tooltip()
     //   ];
  
     
-  
-   
+    
+    
     const buscar = async () => {
         const url = `/leaflet/API/mapas/buscar`;
         const config = {
@@ -57,11 +61,9 @@ var tooltip = L.tooltip()
             const respuesta = await fetch(url, config);
             const data = await respuesta.json();
     
-            // console.log(data);
             markerLayer.clearLayers();
     
             if (data && data.length > 0) {
-            
                 const coordinates = data.map(registro => {
                     const latitud = parseFloat(registro.latitud);
                     const longitud = parseFloat(registro.longitud);
@@ -72,11 +74,10 @@ var tooltip = L.tooltip()
                 }).filter(coordinate => coordinate !== null);
     
                 if (coordinates.length > 0) {
-                 
                     const bounds = L.latLngBounds(coordinates);
     
                     map.fitBounds(bounds);
-                    
+    
                     data.forEach(registro => {
                         const latitud = parseFloat(registro.latitud);
                         const longitud = parseFloat(registro.longitud);
@@ -86,10 +87,11 @@ var tooltip = L.tooltip()
                                 icon: icon,
                                 draggable: true
                             });
-    
                             const popup = L.popup()
                                 .setLatLng([latitud, longitud])
-                                .setContent(`<p>Nombre: ${registro.coord_nombre}<br> ubicacion desde la db</p>`);
+                                .setContent(`<p>Nombre: ${registro.mapa_nombre} </p>
+                                <p>Latitud: ${latitud}</p>
+                                <p>Longitud: ${longitud}</p>`);
                             var tooltip = L.tooltip()
                                 .setLatLng([latitud, longitud])
                                 .setContent('UBICACIONES DESDE LA DB')
@@ -100,7 +102,8 @@ var tooltip = L.tooltip()
                         }
                     });
     
-                 
+                    btnReiniciar.disabled = false; 
+                    btnReiniciar.parentElement.style.display = ''; 
                     Toast.fire({
                         title: 'COORDENADAS ENCONTRADAS',
                         icon: 'success'
@@ -110,18 +113,24 @@ var tooltip = L.tooltip()
                         title: 'No se encontraron registros válidos con coordenadas',
                         icon: 'info'
                     });
+                    btnReiniciar.disabled = true; 
+                    btnReiniciar.parentElement.style.display = 'none';
                 }
             } else {
                 Toast.fire({
                     title: 'No se encontraron registros',
                     icon: 'info'
                 });
+                btnReiniciar.disabled = true; 
+                btnReiniciar.parentElement.style.display = 'none'; 
             }
-    
         } catch (error) {
             console.error(error);
+            btnReiniciar.disabled = true; 
+            btnReiniciar.parentElement.style.display = 'none'; 
         }
     }
+    
     
     
     

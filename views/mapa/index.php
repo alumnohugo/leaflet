@@ -10,7 +10,7 @@
                 </div>
                 <div class="col-3">
                     <a href="/leaflet/mapa">
-                        <button type="button" id="btnBuscar" class="btn btn-warning w-100">Reiniciar</button>
+                        <button type="button" id="btnReiniciar" class="btn btn-warning w-100">Reiniciar</button>
                     </a>
                 </div>
 
